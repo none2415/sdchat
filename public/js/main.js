@@ -80,10 +80,29 @@ function displayMessage(message) {
     para.innerText = message.text;
     div.appendChild(para);
     document.querySelector('.messages').appendChild(div);
+    playSound();
   }
 
 }
+const context = new AudioContext();
+function playSound() {
+  const oscillatorNode = context.createOscillator();
+  const gainNode = context.createGain();
 
+  oscillatorNode.type = 'sine';
+  oscillatorNode.frequency.setValueAtTime(150, context.currentTime);
+  oscillatorNode.frequency.exponentialRampToValueAtTime(500, context.currentTime + 0.5);
+
+  gainNode.gain.setValueAtTime(0.3, context.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
+
+  oscillatorNode.connect(gainNode);
+  gainNode.connect(context.destination);
+
+  oscillatorNode.start();
+  oscillatorNode.stop(context.currentTime + 0.5);
+  console.log("play");
+}
 
 // Add room name to DOM
 function displayRoomName(room) {
@@ -154,29 +173,29 @@ socket.on('typing', function (data) {
   }
 });
 
-(function () {
-  const send = document.getElementById('send');
-  const context = new AudioContext();
-  send.onclick = () => {
-    playSound();
+// (function () {
+//   const send = document.getElementById('send');
+//   const context = new AudioContext();
+//   send.onclick = () => {
+//     // playSound();
 
-  };
-  function playSound() {
-    const oscillatorNode = context.createOscillator();
-    const gainNode = context.createGain();
+//   };
+//   function playSound() {
+//     const oscillatorNode = context.createOscillator();
+//     const gainNode = context.createGain();
 
-    oscillatorNode.type = 'sine';
-    oscillatorNode.frequency.setValueAtTime(150, context.currentTime);
-    oscillatorNode.frequency.exponentialRampToValueAtTime(500, context.currentTime + 0.5);
+//     oscillatorNode.type = 'sine';
+//     oscillatorNode.frequency.setValueAtTime(150, context.currentTime);
+//     oscillatorNode.frequency.exponentialRampToValueAtTime(500, context.currentTime + 0.5);
 
-    gainNode.gain.setValueAtTime(0.3, context.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
+//     gainNode.gain.setValueAtTime(0.3, context.currentTime);
+//     gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
 
-    oscillatorNode.connect(gainNode);
-    gainNode.connect(context.destination);
+//     oscillatorNode.connect(gainNode);
+//     gainNode.connect(context.destination);
 
-    oscillatorNode.start();
-    oscillatorNode.stop(context.currentTime + 0.5);
-    console.log("play");
-  }
-}());
+//     oscillatorNode.start();
+//     oscillatorNode.stop(context.currentTime + 0.5);
+//     console.log("play");
+//   }
+// }());
